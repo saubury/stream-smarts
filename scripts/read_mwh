@@ -1,0 +1,20 @@
+#!/bin/bash
+
+kafka-avro-console-producer  \
+--broker-list localhost:9092 \
+--topic raw_mwh              \
+--property value.schema='
+{
+  "type": "record",
+  "name": "myrecord",
+  "fields": [
+    {
+      "name": "hour",
+      "type": "float"
+    },
+     {
+      "name": "mwh",
+      "type": "float"
+    }
+  ]
+}'
