@@ -1,7 +1,16 @@
 #!/bin/bash
 
+export BROKER_LIST=localhost:9092
+
+if [ ! -z ${1} ]; then
+  export BROKER_LIST=${1}
+fi
+
+echo "Sending to broker ${BROKER_LIST}"
+
+
 kafka-avro-console-producer  \
---broker-list localhost:9092 \
+--broker-list ${BROKER_LIST} \
 --topic raw_mwh              \
 --property value.schema='
 {

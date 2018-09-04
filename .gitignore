@@ -1,2 +1,6 @@
 *.swp
 docker-compose-ui.yml
+*/__pycache__/*
+*.pyc
+credentials.py
+scripts/python/credentials.py
