@@ -93,22 +93,6 @@ ksql> list functions;
 
 
 
-```
-# build ksql-udf-iot.jar
-ls -l ext/ksql-udf-iot.jar
-
-# stop KSQL server
-docker-compose stop ksql-server
-
-# Replace the UDF ksql-udf-iot.jar
-rm ext/ksql-udf-iot.jar
-cp java/out/artifacts/ksql-udf-iot.jar ext
-
-# Restrt KSQL server
-docker-compose start ksql-server
-```
-
-
 
 
 ## Setting up streams
@@ -125,12 +109,6 @@ create stream anomoly_power with (value_format='JSON') as select rowtime as even
 
 ## View 
 
-# Compil Stuff
-```
-cd java
-mvn clean package
-ls target/ksql-udf-iot-1.0.jar
-```
 
 
 ## Other Data Loading Examples
