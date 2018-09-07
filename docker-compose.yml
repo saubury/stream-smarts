@@ -103,3 +103,14 @@ services:
       - ./scripts:/scripts
     entrypoint: /bin/sh
     tty: true      
+
+  kafka-notifier:
+    image: 'simonaubury/kafka-notifier:latest'
+    build:
+      context: docker/
+    hostname: kafka-notifier
+    volumes:
+      - ./scripts:/scripts
+    extra_hosts:
+      - "moby:127.0.0.1"      
+

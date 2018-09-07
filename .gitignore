@@ -4,3 +4,4 @@ docker-compose-ui.yml
 *.pyc
 credentials.py
 scripts/python/credentials.py
+.vscode/*

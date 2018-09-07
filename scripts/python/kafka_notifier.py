@@ -4,6 +4,9 @@
 
 from confluent_kafka import Consumer, KafkaError
 from pushbullet import Pushbullet
+import json
+
+# API keys held in a non-commited file
 import credentials
 
 
@@ -18,7 +21,7 @@ pb = Pushbullet(credentials.login['api_token'])
 
 
 c = Consumer(settings)
-c.subscribe(['TEST'])
+c.subscribe(['ANOMOLY_POWER'])
 
 
 while True:
@@ -31,8 +34,10 @@ while True:
             print(msg.error())
             break
 
-    print('Received message: {}'.format(msg.value().decode('utf-8')))
-    push = pb.push_note("Kafka Notice!", 'Received message: {}'.format(msg.value().decode('utf-8')))
+    app_json_msg = json.loads(msg.value().decode('utf-8'))
+    print('JSON message: HR:{} MWh:{} Fn:{}'.format(app_json_msg['HOUR'], app_json_msg['MWH'], app_json_msg['FN']))
 
+    push = pb.push_note('Unusal power usage of {:.0f} MWh at {:.0f}:00.  Perhaps you have left something running?'.format( app_json_msg['MWH']
+       , app_json_msg['HOUR']),     'Full message: {}'.format( app_json_msg))
 
 c.close()
