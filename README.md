@@ -40,8 +40,9 @@ docker-compose exec schema-registry bash
 # Note, you are navigating within the container
 cd /scripts
 
-# Load a single record
-echo '{"hour": 3, "mwh": 321}' | ./read_mwh kafka:29092
+# Load demonstration records
+echo '{"hour": 4, "kwh": 1500}' | ./read_power kafka:29092
+echo '{"hour": 9, "kwh": 1500}' | ./read_power kafka:29092
 
 # Now exit
 exit
@@ -98,11 +99,18 @@ ksql> list functions;
 ## Setting up streams
 
 ```
-create stream raw_power with (kafka_topic='raw_mwh', value_format='avro');
 
-create stream  power_stream_rekeyed as select rowtime, hour, mwh, anomoly_power(hour, mwh) as fn from raw_power partition by rowtime;
+SET 'auto.offset.reset' = 'earliest';
 
-create stream anomoly_power with (value_format='JSON') as select rowtime as event_ts, hour, mwh, fn from power_stream_rekeyed where fn>1.0;
+create stream raw_power_stream with (kafka_topic='raw_power', value_format='avro');
+
+create stream  power_stream_rekeyed as select rowtime, hour, kwh, anomoly_power(hour, kwh) as fn from raw_power_stream partition by rowtime;
+
+select timestamptostring(rowtime, 'yyyy-MM-dd HH:mm:ss'), hour, kwh, fn from  power_stream_rekeyed;
+2018-09-08 04:21:44 | 4.0 | 1500.0 | 5.458823529411765
+2018-09-08 04:21:59 | 9.0 | 1500.0 | 0.6913887506222001
+
+create stream anomoly_power with (value_format='JSON') as select rowtime as event_ts, hour, kwh, fn from power_stream_rekeyed where fn>1.0;
 ```
 
 

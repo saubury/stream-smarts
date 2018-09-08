@@ -11,7 +11,7 @@ echo "Sending to broker ${BROKER_LIST}"
 
 kafka-avro-console-producer  \
 --broker-list ${BROKER_LIST} \
---topic raw_mwh              \
+--topic raw_power              \
 --property value.schema='
 {
   "type": "record",
@@ -22,7 +22,7 @@ kafka-avro-console-producer  \
       "type": "float"
     },
      {
-      "name": "mwh",
+      "name": "kwh",
       "type": "float"
     }
   ]

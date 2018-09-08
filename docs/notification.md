@@ -6,3 +6,8 @@
 |---|----|-----|
 
 ## Architectural overview
+
+```
+docker-compose exec kafka-notifier python /scripts/python/kafka_notifier.py
+```
+

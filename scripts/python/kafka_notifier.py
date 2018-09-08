@@ -32,7 +32,7 @@ while True:
             break
 
     app_json_msg = json.loads(msg.value().decode('utf-8'))
-    push = pb.push_note('Unusal power usage of {:.0f} MWh at {:.0f}:00.  Perhaps you have left something running?'.format( app_json_msg['MWH']
+    push = pb.push_note('Unusal power usage of {:.0f} Wh at {:.0f}:00.   Please check!'.format( app_json_msg['KWH']
        , app_json_msg['HOUR']),     'Full message: {}'.format( app_json_msg))
 
 c.close()
