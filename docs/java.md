@@ -2,8 +2,10 @@
 
 
 
-| [Overview](/README.md) | Java | [Notification](/docs/notification.md) |
-|---|----|-----|
+| [Overview](/README.md) | Java | [Notification](/docs/notification.md) |[Random Notes](/docs/notes.md) |
+|---|----|-----|-----|
+
+
 
 # Java Overview
 

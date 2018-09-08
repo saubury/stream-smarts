@@ -2,8 +2,8 @@
 
 
 
-| Overview | [Java](/docs/java.md) | [Notification](/docs/notification.md) |
-|---|----|-----|
+| Overview | [Java](/docs/java.md) | [Notification](/docs/notification.md) |[Random Notes](/docs/notes.md) |
+|---|----|----|-----|
 
 ## Architectural overview
 
