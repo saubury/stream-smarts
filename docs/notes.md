@@ -32,6 +32,11 @@ run script 'ksql_commands.ksql';
 
 ```
 
+# Docker build
+```
+WARNING: Image for service kafka-notifier was built because it did not already exist. To rebuild this image you must use `docker-compose build` or `docker-compose up --build`.
+```
+
 # Function Results
 
 ```
@@ -59,4 +64,27 @@ run script 'ksql_commands.ksql';
 {"hour": 9, "kwh": 3000}
 {"hour": 20, "kwh": 3000}
 
+```
+
+
+## Other Data Loading Examples
+
+Jump _into_ the `schema-registry` container 
+
+```
+docker-compose exec schema-registry bash
+
+
+# Note, you are navigating within the container
+cd /scripts
+
+
+# Load a day worth of data
+cat mwh_20180805.json | ./read_mwh kafka:29092
+
+# Or pass in slowly like this
+cat mwh_20180805.json | while read line; do echo $line; sleep 1; done | ./read_mwh kafka:29092
+
+# Now exit
+exit
 ```

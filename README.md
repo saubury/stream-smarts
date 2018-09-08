@@ -19,7 +19,7 @@ https://github.com/kaiwaehner/ksql-udf-deep-learning-mqtt-iot
 ## Prerequisites & setup
 - clone this repo!
 - install docker/docker-compose
-- set your Docker maximum memory to something really big, such as 22GB. (preferences -> advanced -> memory)
+- set your Docker maximum memory to something really big, such as 10GB. (preferences -> advanced -> memory)
 
 
 ## Startup
@@ -36,12 +36,10 @@ Jump _into_ the `schema-registry` container
 ```
 docker-compose exec schema-registry bash
 
-
 # Note, you are navigating within the container
 cd /scripts
 
 # Load demonstration records
-echo '{"hour": 4, "kwh": 1500}' | ./read_power kafka:29092
 echo '{"hour": 9, "kwh": 1500}' | ./read_power kafka:29092
 
 # Now exit
@@ -77,10 +75,8 @@ ksql> show topics;
 
 # Build and deploy KSQL User Defined Anomoly Functions
 
-- The user defined function is a Java classes in `ksql-udf-iot.jar` build artifact
-
-Start `ksql` client and verify 
-
+-  For this quickstart you'll find the Java class `ksql-udf-iot.jar` is already in the `ext` directory; and the ksql-server should have loaded it
+- Run these ksql commands to check you can see the UDF `ANOMOLY_POWER`
 ```
 ksql> list functions;
 
@@ -88,7 +84,7 @@ ksql> list functions;
 -------------------------------------
   . . .
  ANOMOLY_LOCATION        | SCALAR
- ANOMOLY_POWER           | SCALAR   <--- You need this one
+ ANOMOLY_POWER           | SCALAR   <--- Has been loaded from ksql-udf-iot.jar
  ANOMOLY_WATER           | SCALAR
 ```
 
@@ -98,45 +94,64 @@ ksql> list functions;
 
 ## Setting up streams
 
+- Now we will create the streams
 ```
-
 SET 'auto.offset.reset' = 'earliest';
 
 create stream raw_power_stream with (kafka_topic='raw_power', value_format='avro');
 
-create stream  power_stream_rekeyed as select rowtime, hour, kwh, anomoly_power(hour, kwh) as fn from raw_power_stream partition by rowtime;
+create stream  power_stream_rekeyed as \
+select rowtime, hour, kwh, anomoly_power(hour, kwh) as fn \
+from raw_power_stream partition by rowtime;
 
-select timestamptostring(rowtime, 'yyyy-MM-dd HH:mm:ss'), hour, kwh, fn from  power_stream_rekeyed;
-2018-09-08 04:21:44 | 4.0 | 1500.0 | 5.458823529411765
-2018-09-08 04:21:59 | 9.0 | 1500.0 | 0.6913887506222001
+select timestamptostring(rowtime, 'yyyy-MM-dd HH:mm:ss'), hour, kwh, fn \
+from  power_stream_rekeyed limit 1;
 
-create stream anomoly_power with (value_format='JSON') as select rowtime as event_ts, hour, kwh, fn from power_stream_rekeyed where fn>1.0;
+    2018-09-08 11:34:37 | 9.0 | 1500.0 | 0.6913887506222001
+    Limit Reached
+    Query terminated
+
+create stream anomoly_power with (value_format='JSON') as \
+select rowtime as event_ts, hour, kwh, fn \
+from power_stream_rekeyed where fn>1.0;
 ```
 
-
+- The stream `anomoly_power` is now running.  It will only produce records for significant events.  By _subscribing_ to the `anomoly_power` topic we can build a notification for significant events
 
 ## View 
+- In the ksql window, start a query like this looking for anomoly records. Keep this query running
+```
+select * from anomoly_power;
+```
 
-
-
-## Other Data Loading Examples
-
-Jump _into_ the `schema-registry` container 
-
+- In *another* session 
 ```
 docker-compose exec schema-registry bash
-
 
 # Note, you are navigating within the container
 cd /scripts
 
+# Load a non-anomoly record
+# Note that no records are returned in the other terminal ksql query
+echo '{"hour": 9, "kwh": 1500}' | ./read_power kafka:29092
 
-# Load a day worth of data
-cat mwh_20180805.json | ./read_mwh kafka:29092
-
-# Or pass in slowly like this
-cat mwh_20180805.json | while read line; do echo $line; sleep 1; done | ./read_mwh kafka:29092
+# Load an anomoly record
+# Note that a record should be returned in the other terminal  ksql query
+echo '{"hour": 4, "kwh": 1500}' | ./read_power kafka:29092
 
 # Now exit
 exit
 ```
+
+## What did we see?
+- Running a query using the `ANOMOLY_POWER` function allowed a predifined model to be used within a KSQL query
+- The stream `anomoly_power` stream created a topic which only had events that breached the limit of the model
+- By _subscribing_ to the `anomoly_power` we can build a notification for significant events
+
+## Shutdown and cleanup
+```
+docker-compose down
+```
+
+
+
