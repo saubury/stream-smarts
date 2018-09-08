@@ -15,7 +15,9 @@
 
 ## Configure Pushbullet API
 
-- Get a Push Bullet account; and then an API Token at 
+- Get a Push Bullet account
+- Install on your phone
+- Get an API Token at 
 https://www.pushbullet.com/#settings/account
 - Set this line in `credentials.py`
 

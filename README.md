@@ -76,6 +76,7 @@ ksql> show topics;
 # Build and deploy KSQL User Defined Anomoly Functions
 
 -  For this quickstart you'll find the Java class `ksql-udf-iot.jar` is already in the `ext` directory; and the ksql-server should have loaded it
+- *Optional* : if you want to build your own `ksql-udf-iot.jar` and deploy follow the [Java Steps](/docs/java.md) 
 - Run these ksql commands to check you can see the UDF `ANOMOLY_POWER`
 ```
 ksql> list functions;
@@ -147,6 +148,9 @@ exit
 - Running a query using the `ANOMOLY_POWER` function allowed a predifined model to be used within a KSQL query
 - The stream `anomoly_power` stream created a topic which only had events that breached the limit of the model
 - By _subscribing_ to the `anomoly_power` we can build a notification for significant events
+
+## Build a notifier
+- If you are keen - go on to [Notification](/docs/notification.md)
 
 ## Shutdown and cleanup
 ```
