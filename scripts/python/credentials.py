@@ -2,5 +2,6 @@
 # https://www.pushbullet.com/#settings/account
 
 login = {
-    'api_token' : 'ITISASECRET'
+    'pushbullet_api_token' : 'ITSASECRET',
+    'hassio_password' : 'ITSASECRET'
 }
