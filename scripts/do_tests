@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo '{"hour": 4, "kwh": 1500}'  | docker-compose exec -T schema-registry /scripts/read_power kafka:29092
+
+echo
+echo
+echo
+
+cat << EOF
+
+**************************************************************
+create stream raw_power_stream with (kafka_topic='raw_power', value_format='avro');
+
+create stream  power_stream_rekeyed as select rowtime, hour, kwh, anomoly_power(hour, kwh) as fn from raw_power_stream partition by rowtime;
+
+create stream anomoly_power with (value_format='JSON') as select rowtime as event_ts, hour, kwh, fn from power_stream_rekeyed where fn>1.0;
+
+select * from anomoly_power limit 1;
+**************************************************************
+
+EOF
+
+
+docker-compose exec ksql-cli ksql "http://ksql-server:8088" --config-file /scripts/ksql-config-file.txt
+

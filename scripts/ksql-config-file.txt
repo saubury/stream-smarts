@@ -1,0 +1,1 @@
+ksql.streams.auto.offset.reset=earliest

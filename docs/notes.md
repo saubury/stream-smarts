@@ -13,6 +13,11 @@ echo '{"f1": "value1"}' | kafka-console-producer --broker-list localhost:9092 --
 ```
 
 
+# CLI
+```
+echo $PS1
+\[\033[36m\]\u:\[\033[33;1m\]\W\[\033[m\]\$
+```
 
 # KSQL
 ```
