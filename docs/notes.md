@@ -37,6 +37,11 @@ run script 'ksql_commands.ksql';
 WARNING: Image for service kafka-notifier was built because it did not already exist. To rebuild this image you must use `docker-compose build` or `docker-compose up --build`.
 ```
 
+# Git - don't checkin secrets
+```
+ git update-index --assume-unchanged scripts/python/credentials.py
+ ```
+
 # Function Results
 
 ```
