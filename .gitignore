@@ -5,3 +5,4 @@ docker-compose-ui.yml
 credentials.py
 scripts/python/credentials.py
 .vscode/*
+java/target/*
